@@ -1,12 +1,23 @@
-# DualView — See Your Hands in 3D, With Two Ordinary Cameras
+# DualView — Stereo Hand Tracking in 3D
 
-**A laptop and a phone. No depth sensor. Your hands reconstructed in 3D and used to move real objects in a virtual scene.**
+**A laptop and a phone work as a stereo camera pair. Your hands are tracked in 3D and used to move objects in a 3D scene. No depth sensor.**
 
-Point a laptop camera and a phone camera at the same pair of hands. DualView finds 21 landmarks per hand in *both* views, then uses calibrated stereo geometry to **triangulate every landmark into 3D space, in metres**. Pinch to pick up a 3D model and move it through depth. Pinch with both hands to scale it. Spread your palms to stretch a liquid-metal sculpture and squeeze to lift its centre.
+[The setup](#the-setup) · [What you can do](#what-you-can-do) · [How it works](#how-two-cameras-become-3d) · [Quick start](#quick-start-on-macos-apple-silicon) · [Architecture](docs/architecture.md) · [Evaluation and limits](docs/evaluation.md)
 
-Two everyday devices, working as a stereo rig. The phone streams video from its browser over WebRTC; a local C++ backend runs hand inference and 3D reconstruction; a React and Three.js frontend renders the result. **Everything runs on your own machine** — no cloud inference, no depth camera, no headset.
+## The setup
 
-[The 3D problem](#how-two-cameras-become-3d) · [What you can do](#what-you-can-do) · [Camera setup](#camera-setup) · [Quick start](#quick-start-on-macos-apple-silicon) · [Architecture](docs/architecture.md) · [Evaluation and limits](docs/evaluation.md)
+![The rig during calibration: a phone on a stand at right providing the second viewpoint, a laptop running the backend, and a display showing both camera previews with the ChArUco target held in view](docs/media/rig-calibration.jpg)
+
+*Stereo calibration in progress: the phone on the stand is the second camera, and the dashboard shows both previews with the printed ChArUco target visible in each, alongside the per-camera intrinsic profiles, the stereo pair counter, and live tracking-quality readouts.*
+
+A laptop, a phone on a stand, and a shared local network. Both cameras watch the same hands from different positions — that difference in viewpoint is what produces depth. The phone streams its camera over WebRTC; the laptop does all the work. Nothing leaves your network: no cloud inference, no depth camera, no headset.
+
+1. Place the phone beside the laptop and aim both cameras at a shared hand workspace.
+2. Connect the phone through the pairing link and select its camera and resolution.
+3. Calibrate each camera, then calibrate the pair with the printed [ChArUco target](docs/targets/dualview-charuco-a4.pdf).
+4. Keep the phone, laptop lid, and camera modes fixed after calibration — moving either camera invalidates the geometry.
+
+Use even lighting and keep the entire hand visible in both previews. See [calibration](docs/calibration.md), [phone HTTPS setup](docs/https-android.md), and [video quality](docs/video-quality.md).
 
 ## What you can do
 
@@ -80,21 +91,6 @@ Stereo reconstruction is easy to *appear* to get right, so the geometry is measu
 - **[Verification](docs/verification.md)** — native and browser tests, concurrency tests, sanitizer coverage and outstanding physical-device measurements.
 
 Physical hand accuracy and end-to-end latency have **not** been established. The synthetic results verify geometry behaviour; they do not substitute for a measured real-camera demo.
-
-## Camera setup
-
-A laptop with a camera, a phone on a stable stand, and a shared local network. Both cameras must see the same hands from different positions — that difference in viewpoint is what produces depth. The phone supplies the second viewpoint; the computer does the processing.
-
-![The rig during calibration: a phone on a stand at right providing the second viewpoint, a laptop running the backend, and a display showing both camera previews with the ChArUco target held in view](docs/media/rig-calibration.jpg)
-
-*Stereo calibration in progress. The phone on the stand is the second camera; the laptop runs the backend. The dashboard shows both camera previews with the printed ChArUco target visible in each, alongside the per-camera intrinsic profiles, the stereo pair counter, and live tracking-quality readouts.*
-
-1. Place the phone beside the laptop and aim both cameras at a shared hand workspace.
-2. Connect the phone through the pairing link and select its camera and resolution.
-3. Calibrate each camera, then calibrate the pair with the printed [ChArUco target](docs/targets/dualview-charuco-a4.pdf).
-4. Keep the phone, laptop lid, and camera modes fixed after calibration — moving either camera invalidates the geometry.
-
-Use even lighting and keep the entire hand visible in both previews. See [calibration](docs/calibration.md), [phone HTTPS setup](docs/https-android.md), and [video quality](docs/video-quality.md).
 
 ## Quick start on macOS Apple Silicon
 
