@@ -2,22 +2,7 @@
 
 **A laptop and a phone work as a stereo camera pair. Your hands are tracked in 3D and used to move objects in a 3D scene. No depth sensor.**
 
-[The setup](#the-setup) · [What you can do](#what-you-can-do) · [How it works](#how-it-works) · [Quick start](#quick-start-on-macos-apple-silicon) · [Architecture](docs/architecture.md) · [Evaluation and limits](docs/evaluation.md)
-
-## The setup
-
-![The rig during calibration: a phone on a stand at right providing the second viewpoint, a laptop running the backend, and a display showing both camera previews with the ChArUco target held in view](docs/media/rig-calibration.jpg)
-
-*Stereo calibration in progress: the phone on the stand is the second camera, and the dashboard shows both previews with the printed ChArUco target visible in each, alongside the per-camera intrinsic profiles, the stereo pair counter, and live tracking-quality readouts.*
-
-A laptop, a phone on a stand, and a shared local network. Both cameras watch the same hands from different positions — that difference in viewpoint is what produces depth. The phone streams its camera over WebRTC; the laptop does all the work. Nothing leaves your network: no cloud inference, no depth camera, no headset.
-
-1. Place the phone beside the laptop and aim both cameras at a shared hand workspace.
-2. Connect the phone through the pairing link and select its camera and resolution.
-3. Calibrate each camera, then calibrate the pair with the printed [ChArUco target](docs/targets/dualview-charuco-a4.pdf).
-4. Keep the phone, laptop lid, and camera modes fixed after calibration — moving either camera invalidates the geometry.
-
-Use even lighting and keep the entire hand visible in both previews. See [calibration](docs/calibration.md), [phone HTTPS setup](docs/https-android.md), and [video quality](docs/video-quality.md).
+[What you can do](#what-you-can-do) · [The setup](#the-setup) · [How it works](#how-it-works) · [Quick start](#quick-start-on-macos-apple-silicon) · [Architecture](docs/architecture.md) · [Evaluation and limits](docs/evaluation.md)
 
 ## What you can do
 
@@ -42,6 +27,21 @@ Spread your palms to stretch the material, bring them together to merge it, then
 *The scale factor comes from the metric distance between the two pinch points in 3D, so it is unaffected by how far the hands are from either camera.*
 
 Models are original procedural geometry: a bed, car, flower and tower, plus Light Trails and Energy experiments. **Auto demo** explores the liquid material without cameras; live 3D hand control requires calibration.
+
+## The setup
+
+![The rig during calibration: a phone on a stand at right providing the second viewpoint, a laptop running the backend, and a display showing both camera previews with the ChArUco target held in view](docs/media/rig-calibration.jpg)
+
+*Stereo calibration in progress: the phone on the stand is the second camera, and the dashboard shows both previews with the printed ChArUco target visible in each, alongside the per-camera intrinsic profiles, the stereo pair counter, and live tracking-quality readouts.*
+
+A laptop, a phone on a stand, and a shared local network. Both cameras watch the same hands from different positions — that difference in viewpoint is what produces depth. The phone streams its camera over WebRTC; the laptop does all the work. Nothing leaves your network: no cloud inference, no depth camera, no headset.
+
+1. Place the phone beside the laptop and aim both cameras at a shared hand workspace.
+2. Connect the phone through the pairing link and select its camera and resolution.
+3. Calibrate each camera, then calibrate the pair with the printed [ChArUco target](docs/targets/dualview-charuco-a4.pdf).
+4. Keep the phone, laptop lid, and camera modes fixed after calibration — moving either camera invalidates the geometry.
+
+Use even lighting and keep the entire hand visible in both previews. See [calibration](docs/calibration.md), [phone HTTPS setup](docs/https-android.md), and [video quality](docs/video-quality.md).
 
 ## How it works
 
