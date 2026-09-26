@@ -1,0 +1,35 @@
+services:
+  backend:
+    build: .
+    image: dualview-lab:local
+    # Native Linux: exposes dynamically allocated WebRTC UDP ports without NAT.
+    network_mode: host
+    init: true
+    env_file: .env
+    environment:
+      DUALVIEW_HOST: 0.0.0.0
+      DUALVIEW_TRACKING_LOG: '-'
+      DUALVIEW_METAL_LOG: /data/logs/dualview-metal.jsonl
+      DUALVIEW_INFERENCE_PROVIDER: ${DUALVIEW_DOCKER_INFERENCE_PROVIDER:-cpu}
+      DUALVIEW_CAMERA_ENABLED: ${DUALVIEW_DOCKER_CAMERA_ENABLED:-false}
+      DUALVIEW_FRONTEND_DIR: /app/frontend/dist
+      DUALVIEW_MODELS_DIR: /app/models/onnx
+      DUALVIEW_CALIBRATION_FILE: /data/calibration/native.yml
+      DUALVIEW_TLS_CERT: /app/certs/dualview-lab.pem
+      DUALVIEW_TLS_KEY: /app/certs/dualview-lab-key.pem
+    volumes:
+      - calibration:/data/calibration
+      - diagnostics:/data/logs
+      - ./certs:/app/certs:ro
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+    cap_drop:
+      - ALL
+volumes:
+  calibration:
+  diagnostics:

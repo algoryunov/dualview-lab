@@ -1,0 +1,54 @@
+name: Verify
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm --prefix frontend ci
+      - run: npm --prefix frontend run lint
+      - run: npm --prefix frontend run format:check
+      - run: npm --prefix frontend test
+      - run: node --test scripts/tests/*.test.mjs
+      - run: npm --prefix frontend run build
+      - run: node scripts/check-repository.mjs
+      - run: node scripts/check-repository.mjs --staged
+  native:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: brew install cmake pkg-config opencv@4 nlohmann-json gstreamer libnice-gstreamer clang-format
+      - run: make backend-install frontend-install build
+      - run: make test
+      - run: node scripts/format-native.mjs --check
+      - name: Core concurrency sanitizer checks
+        run: |
+          cmake -S backend -B backend/build-tsan -DDUALVIEW_TSAN=ON -DDUALVIEW_BUILD_SERVER=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo
+          cmake --build backend/build-tsan --target work_revisions_test data_outbox_test --parallel
+          ctest --test-dir backend/build-tsan -R '^(work_revisions|data_outbox)$' --output-on-failure
+      - run: cd frontend && npx playwright install chromium
+      - name: WebRTC integration
+        run: make integration-test
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: docker build -t dualview-lab:local .
+      - run: npm --prefix frontend ci
+      - run: cd frontend && npx playwright install --with-deps chromium
+      - run: ./scripts/test-container.sh

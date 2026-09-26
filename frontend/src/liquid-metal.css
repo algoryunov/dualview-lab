@@ -1,0 +1,252 @@
+.liquid-metal {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.liquid-metal > canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.metal-stage {
+  position: relative;
+  flex: 1;
+  min-height: 300px;
+  background: #07101b;
+  isolation: isolate;
+  touch-action: none;
+  cursor: grab;
+  container-type: inline-size;
+}
+.metal-stage:active {
+  cursor: grabbing;
+}
+.metal-overlay {
+  z-index: 2;
+  pointer-events: none;
+}
+.metal-heading {
+  position: absolute;
+  top: 28px;
+  left: 32px;
+  pointer-events: none;
+  z-index: 1;
+}
+.metal-kicker {
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: #71929d;
+}
+.metal-heading h2 {
+  font-weight: 450;
+  letter-spacing: -0.04em;
+  font-size: clamp(25px, 4vw, 48px);
+  line-height: 1.08;
+  margin: 14px 0;
+  color: #e8eeee;
+}
+.metal-heading h2 em {
+  font-style: normal;
+  color: #839ca9;
+}
+.metal-heading p {
+  font-size: 11px;
+  color: #708d9b;
+  max-width: 240px;
+  line-height: 1.6;
+}
+.metal-status {
+  position: absolute;
+  right: 25px;
+  top: 29px;
+  color: #a1b8c5;
+  font-size: 9px;
+  letter-spacing: 0.13em;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  z-index: 2;
+}
+.metal-status > i {
+  width: 5px;
+  height: 5px;
+  background: #a49174;
+  border-radius: 50%;
+}
+.metal-status > i.is-live {
+  background: #6deac1;
+  box-shadow: 0 0 12px #6deac1;
+}
+.metal-status span {
+  color: #5a7385;
+  margin-left: 8px;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.metal-bottom {
+  position: absolute;
+  bottom: 24px;
+  left: 20px;
+  right: 20px;
+  z-index: 2;
+  text-align: center;
+  pointer-events: none;
+}
+.metal-finishes {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  pointer-events: auto;
+}
+.metal-finishes button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 13px;
+  font-size: 11px;
+  background: #101d29c9;
+  border: 1px solid #30424f;
+  border-radius: 24px;
+  color: #8da7b6;
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+}
+.metal-finishes button[aria-pressed='true'] {
+  color: #f0f6f8;
+  border-color: #8aa5b8;
+  background: #243748b3;
+}
+.metal-finishes i {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(120deg, #182a3c, #fff 40%, #708b9b 53%, #132235 70%, #bbd7e4);
+}
+.metal-finishes .finish-1 {
+  background: linear-gradient(130deg, #123c70, #7dfbff, #8f237c, #edb8dd);
+}
+.metal-finishes .finish-2 {
+  background: linear-gradient(120deg, #3d290b, #ffe0a0, #a3742b, #291d0d);
+}
+.metal-bottom p {
+  color: #91a8b5;
+  font-size: 11px;
+  margin: 12px 0 6px;
+}
+.metal-bottom small {
+  color: #536e80;
+  font-size: 10px;
+}
+.metal-camera-status {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  color: #b0beca;
+  background: #07111bba;
+  border: 1px solid #2e3d4c;
+  border-radius: 20px;
+  padding: 7px 12px;
+  font-size: 11px;
+}
+.metal-error {
+  position: absolute;
+  top: 45%;
+  left: 15%;
+  right: 15%;
+  padding: 20px;
+  color: #ffcaca;
+  background: #472b36;
+  border-radius: 10px;
+  z-index: 5;
+}
+@container (max-width:550px) {
+  .metal-heading {
+    left: 18px;
+    top: 15px;
+  }
+  .metal-kicker {
+    font-size: 7px;
+  }
+  .metal-heading h2 {
+    font-size: 24px;
+    margin: 8px 0;
+  }
+  .metal-heading p {
+    display: none;
+  }
+  .metal-status {
+    top: 18px;
+    right: 15px;
+    font-size: 8px;
+  }
+  .metal-status span {
+    display: none;
+  }
+  .metal-bottom {
+    bottom: 15px;
+  }
+  .metal-bottom small {
+    display: none;
+  }
+  .metal-finishes button {
+    padding: 6px 9px;
+    font-size: 10px;
+  }
+}
+@media (max-width: 760px) {
+  .metal-heading {
+    left: 20px;
+  }
+  .metal-heading p {
+    max-width: 170px;
+  }
+  .metal-status {
+    right: 18px;
+    top: 22px;
+  }
+}
+
+.metal-input {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  pointer-events: auto;
+}
+.metal-input button {
+  border: 1px solid #476574;
+  border-radius: 8px;
+  background: #132533;
+  color: #a5bfcd;
+  padding: 8px 12px;
+  font-size: 12px;
+}
+.metal-input button[aria-pressed='true'] {
+  background: #21545d;
+  border-color: #78d5d1;
+  color: #fff;
+}
+.metal-bottom .metal-guidance {
+  max-width: 680px;
+  margin: 12px auto 6px;
+  color: #f1d49e;
+  line-height: 1.5;
+  padding: 7px 12px;
+  background: #111e2bdc;
+  border-radius: 8px;
+}
+.metal-bottom .metal-ready {
+  color: #9defcd;
+}
+.metal-bottom .metal-counts {
+  font-size: 10px;
+  color: #9ab5c4;
+}
+.metal-heading p {
+  max-width: 300px;
+}
+.metal-stage {
+  min-height: 430px;
+}

@@ -1,0 +1,32 @@
+# Allowlist: local secrets, calibration, dependencies and Git never enter the context.
+**
+!Dockerfile
+!backend/
+!backend/CMakeLists.txt
+!backend/include/
+!backend/include/**
+!backend/src/
+!backend/src/**
+!backend/tests/
+!backend/tests/**
+!frontend/
+!frontend/package.json
+!frontend/package-lock.json
+!frontend/index.html
+!frontend/tsconfig*.json
+!frontend/vite.config.ts
+!frontend/src/
+!frontend/src/**
+!frontend/public/
+!frontend/public/**
+!scripts/
+!scripts/install_onnxruntime_linux.sh
+!scripts/install_hand_models.sh
+!docker/
+!docker/healthcheck.sh
+!THIRD_PARTY_NOTICES.md
+
+# Exclude workstation metadata even inside allowlisted asset directories.
+**/.DS_Store
+**/*.swp
+**/*.swo

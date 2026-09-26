@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "camera_id": "galaxy-s21-rear",
+  "camera_mode": "rear-1280x720",
+  "width": 1280,
+  "height": 720,
+  "camera_matrix": [[1000.0, 0.0, 640.0], [0.0, 1000.0, 360.0], [0.0, 0.0, 1.0]],
+  "distortion_coefficients": [0.0, 0.0, 0.0, 0.0, 0.0],
+  "calibrated_at": "2026-01-01T00:00:00Z",
+  "calibration_source": "example_only_not_valid_for_a_real_camera",
+  "validation": {"mean_reprojection_error_px": null, "images_used": 0},
+  "usable_for_metric_calibration": false
+}

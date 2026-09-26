@@ -1,0 +1,329 @@
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  color: #dce7ed;
+  background: #080c12;
+  font-synthesis: none;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+a,
+input {
+  touch-action: manipulation;
+}
+button {
+  font: inherit;
+  cursor: pointer;
+  color: inherit;
+  background: #18212c;
+  border: 1px solid #334353;
+  border-radius: 8px;
+  padding: 9px 14px;
+}
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+button:hover:not(:disabled) {
+  border-color: #85cfc4;
+}
+button:focus-visible,
+a:focus-visible,
+summary:focus-visible {
+  outline: 2px solid #a3f0de;
+  outline-offset: 4px;
+}
+a {
+  color: #a3e7db;
+}
+button[aria-current='page'],
+button[aria-pressed='true'] {
+  background: #27413e;
+  border-color: #72bcac;
+  color: #d3fff2;
+}
+.application {
+  max-width: 1800px;
+  margin: auto;
+  padding: 0 28px;
+}
+.app-header {
+  min-height: 92px;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #28323b;
+}
+.brand {
+  font-size: 18px;
+  font-weight: 750;
+  letter-spacing: 0.18em;
+  color: #f1f4f6;
+  text-decoration: none;
+}
+.brand span {
+  display: block;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: #8f9da8;
+  margin-top: 7px;
+}
+.app-header nav {
+  display: flex;
+  gap: 7px;
+}
+.app-header nav button {
+  border-color: transparent;
+  background: transparent;
+}
+.app-header nav button[aria-current='page'] {
+  background: #1c2b2d;
+  border-color: #37554e;
+}
+.connect-phone {
+  font-size: 12px;
+}
+.stage-toolbar {
+  height: 64px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: #81969d;
+  letter-spacing: 0.1em;
+}
+.stage-toolbar div {
+  display: flex;
+  gap: 8px;
+}
+.main-stage {
+  height: calc(100dvh - 224px);
+  min-height: 560px;
+  border: 1px solid #2a3540;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #080d17;
+}
+.main-stage > .demo-scene,
+.main-stage > .demo-effect,
+.main-stage > .liquid-metal {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
+.app-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 65px;
+  color: #72838e;
+  font-size: 11px;
+}
+.app-footer button {
+  border: 0;
+  background: transparent;
+  font-size: 11px;
+}
+.app-error {
+  padding: 12px;
+  background: #41292d;
+  color: #ffdad9;
+  border-radius: 8px;
+}
+.setup {
+  padding: 24px 0;
+  color: #b4c2cc;
+}
+.setup h1,
+.setup h2 {
+  color: #e7eef2;
+  font-weight: 500;
+}
+.setup h2 {
+  font-size: 18px;
+}
+.camera-grid,
+.setup-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.camera-card,
+.setup-grid > section,
+details {
+  border: 1px solid #2a3540;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #101720;
+}
+.card-label {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  font-size: 12px;
+}
+.card-label span {
+  color: #83b4a8;
+}
+.camera-feed {
+  position: relative;
+  height: 360px;
+  background: #060a0f;
+}
+.camera-feed video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.setup-grid {
+  margin: 20px 0;
+}
+.setup-grid > section,
+details {
+  padding: 20px;
+}
+.setup-grid button {
+  margin: 5px 8px 0 0;
+}
+summary {
+  cursor: pointer;
+}
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+details label {
+  display: block;
+  margin-top: 16px;
+}
+dialog {
+  background: #121b24;
+  color: #d5e3ec;
+  border: 1px solid #3b515f;
+  border-radius: 16px;
+  padding: 28px;
+  max-width: 470px;
+  width: calc(100% - 32px);
+}
+dialog::backdrop {
+  background: #02080cbf;
+  backdrop-filter: blur(8px);
+}
+.dialog-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.dialog-heading h2 {
+  font-size: 20px;
+}
+dialog img {
+  display: block;
+  margin: 20px auto;
+  max-width: 100%;
+  border-radius: 8px;
+}
+.pairing-link {
+  overflow-wrap: anywhere;
+  display: block;
+  font-size: 12px;
+}
+dialog p {
+  font-size: 13px;
+  line-height: 1.6;
+}
+@media (max-width: 760px) {
+  .application {
+    padding: 0 12px;
+  }
+  .app-header {
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 18px 0;
+  }
+  .app-header nav {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+  }
+  .app-header nav button {
+    font-size: 12px;
+  }
+  .camera-grid,
+  .setup-grid {
+    grid-template-columns: 1fr;
+  }
+  .main-stage {
+    height: 720px;
+    min-height: 620px;
+  }
+  .stage-toolbar {
+    letter-spacing: 0;
+    gap: 8px;
+  }
+  .stage-toolbar button {
+    font-size: 11px;
+    padding: 8px;
+  }
+  .app-footer {
+    gap: 10px;
+  }
+  .camera-feed {
+    height: 300px;
+  }
+}
+.camera-feed .liquid-metal {
+  pointer-events: none;
+}
+.camera-feed .metal-camera-status {
+  max-width: calc(100% - 30px);
+  font-size: 10px;
+}
+.camera-feed .hand-overlay .metal-camera-status {
+  display: none;
+}
+
+.timing-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+.timing-metrics dt {
+  font-size: 12px;
+  opacity: 0.8;
+}
+.timing-metrics dd {
+  margin: 4px 0 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.setup-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.settings-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.settings-button span {
+  font-size: 20px;
+  line-height: 1;
+}
+.stage-toolbar {
+  min-height: 64px;
+  height: auto;
+  padding: 10px 0;
+  flex-wrap: wrap;
+  gap: 10px;
+}

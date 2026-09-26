@@ -1,0 +1,103 @@
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  color: #e6edf9;
+  background: #080c12;
+  font-synthesis: none;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+select {
+  font: inherit;
+}
+button {
+  border: 1px solid #334353;
+  border-radius: 8px;
+  background: #1b3335;
+  color: #d4efe8;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.scene-canvas {
+  position: relative;
+  overflow: hidden;
+}
+.scene-canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.hand-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+.phone {
+  padding: 28px;
+  margin: auto;
+}
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: #8dafa9;
+}
+.meta {
+  font-size: 12px;
+  color: #8d9cae;
+}
+.phone {
+  max-width: 600px;
+  min-height: 100vh;
+  padding-top: 42px;
+}
+.phone video {
+  background: #080d17;
+  border-radius: 14px;
+  margin: 18px 0 6px;
+  width: 100%;
+  max-height: 58vh;
+  object-fit: contain;
+  object-position: center;
+}
+.phone-status {
+  min-height: 1.5em;
+  color: #bcd0eb;
+}
+.phone-status.error {
+  color: #ffb2aa;
+}
+.phone-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 18px 0;
+  color: #bcd0eb;
+}
+select {
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #35445e;
+  background: #0d1727;
+  color: #e6edf9;
+}
+.phone button {
+  width: 100%;
+  font-size: 1rem;
+}
+.privacy {
+  margin-top: 27px;
+  color: #8193ae;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}

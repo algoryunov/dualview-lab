@@ -1,0 +1,10 @@
+# Linux only: explicit camera access, without privileged mode.
+services:
+  backend:
+    environment:
+      DUALVIEW_CAMERA_ENABLED: 'true'
+      DUALVIEW_CAMERA_INDEX: '0'
+    devices:
+      - ${DUALVIEW_VIDEO_DEVICE:-/dev/video0}:/dev/video0
+    group_add:
+      - ${DUALVIEW_VIDEO_GID:?Set DUALVIEW_VIDEO_GID to the camera device group ID}

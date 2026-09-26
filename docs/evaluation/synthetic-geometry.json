@@ -1,0 +1,208 @@
+{
+  "build": "Release",
+  "compiler": "Apple LLVM 21.0.0 (clang-2100.1.1.101)",
+  "error_reference": "laptop exposure; individual raw landmarks of accepted measured poses",
+  "focal_length_px": 550,
+  "image_size": [
+    640,
+    480
+  ],
+  "kind": "synthetic_geometry_not_physical_device_accuracy",
+  "opencv": "4.14.0",
+  "percentile_method": "nearest rank",
+  "scenarios": [
+    {
+      "accepted": 200,
+      "baseline_m": 0.12,
+      "calibration_baseline_error_fraction": 0,
+      "depth_m": 0.6,
+      "landmark_error_mm_p50": 0.00003908800417599932,
+      "landmark_error_mm_p95": 0.00007177844301840136,
+      "motion_speed_m_s": 0.3,
+      "pixel_noise_sigma": 0,
+      "reasons": {
+        "measured": 200
+      },
+      "reprojection_px_p50": 0.000005124480513943107,
+      "scenario": "ideal",
+      "tracker_us_max": 145.958,
+      "tracker_us_p50": 105.666,
+      "tracker_us_p95": 116.791,
+      "trials": 200,
+      "unobserved_exposure_delay_ms": 0
+    },
+    {
+      "accepted": 200,
+      "baseline_m": 0.12,
+      "calibration_baseline_error_fraction": 0,
+      "depth_m": 0.35,
+      "landmark_error_mm_p50": 1.9380354557976152,
+      "landmark_error_mm_p95": 5.295236016977087,
+      "motion_speed_m_s": 0.3,
+      "pixel_noise_sigma": 1,
+      "reasons": {
+        "measured": 200
+      },
+      "reprojection_px_p50": 0.46980853791037835,
+      "scenario": "noise_near",
+      "tracker_us_max": 138.833,
+      "tracker_us_p50": 61.584,
+      "tracker_us_p95": 65.875,
+      "trials": 200,
+      "unobserved_exposure_delay_ms": 0
+    },
+    {
+      "accepted": 200,
+      "baseline_m": 0.12,
+      "calibration_baseline_error_fraction": 0,
+      "depth_m": 0.6,
+      "landmark_error_mm_p50": 5.385195543001732,
+      "landmark_error_mm_p95": 15.163151122900478,
+      "motion_speed_m_s": 0.3,
+      "pixel_noise_sigma": 1,
+      "reasons": {
+        "measured": 200
+      },
+      "reprojection_px_p50": 0.4698144528554087,
+      "scenario": "noise_middle",
+      "tracker_us_max": 90.833,
+      "tracker_us_p50": 61.5,
+      "tracker_us_p95": 66,
+      "trials": 200,
+      "unobserved_exposure_delay_ms": 0
+    },
+    {
+      "accepted": 200,
+      "baseline_m": 0.12,
+      "calibration_baseline_error_fraction": 0,
+      "depth_m": 1,
+      "landmark_error_mm_p50": 14.613700776709884,
+      "landmark_error_mm_p95": 42.02106842182366,
+      "motion_speed_m_s": 0.3,
+      "pixel_noise_sigma": 1,
+      "reasons": {
+        "measured": 200
+      },
+      "reprojection_px_p50": 0.4698173207075037,
+      "scenario": "noise_far",
+      "tracker_us_max": 133.708,
+      "tracker_us_p50": 61.5,
+      "tracker_us_p95": 69.042,
+      "trials": 200,
+      "unobserved_exposure_delay_ms": 0
+    },
+    {
+      "accepted": 200,
+      "baseline_m": 0.06,
+      "calibration_baseline_error_fraction": 0,
+      "depth_m": 1,
+      "landmark_error_mm_p50": 28.835452034299223,
+      "landmark_error_mm_p95": 84.41702199420753,
+      "motion_speed_m_s": 0.3,
+      "pixel_noise_sigma": 1,
+      "reasons": {
+        "measured": 200
+      },
+      "reprojection_px_p50": 0.4698532390003549,
+      "scenario": "short_baseline",
+      "tracker_us_max": 106.875,
+      "tracker_us_p50": 59.625,
+      "tracker_us_p95": 67.792,
+      "trials": 200,
+      "unobserved_exposure_delay_ms": 0
+    },
+    {
+      "accepted": 200,
+      "baseline_m": 0.12,
+      "calibration_baseline_error_fraction": 0,
+      "depth_m": 0.6,
+      "landmark_error_mm_p50": 66.94204878677351,
+      "landmark_error_mm_p95": 67.19380582964567,
+      "motion_speed_m_s": 0.3,
+      "pixel_noise_sigma": 0,
+      "reasons": {
+        "measured": 200
+      },
+      "reprojection_px_p50": 0.0000026859288484486357,
+      "scenario": "hidden_delay_40ms",
+      "tracker_us_max": 150.666,
+      "tracker_us_p50": 104.417,
+      "tracker_us_p95": 122.166,
+      "trials": 200,
+      "unobserved_exposure_delay_ms": 40
+    },
+    {
+      "accepted": 200,
+      "baseline_m": 0.12,
+      "calibration_baseline_error_fraction": 0,
+      "depth_m": 0.6,
+      "landmark_error_mm_p50": 150.6195690119403,
+      "landmark_error_mm_p95": 151.18609657417042,
+      "motion_speed_m_s": 0.3,
+      "pixel_noise_sigma": 0,
+      "reasons": {
+        "measured": 200
+      },
+      "reprojection_px_p50": 0.0000018336933109867466,
+      "scenario": "hidden_delay_80ms",
+      "tracker_us_max": 187.625,
+      "tracker_us_p50": 104.083,
+      "tracker_us_p95": 133.334,
+      "trials": 200,
+      "unobserved_exposure_delay_ms": 80
+    },
+    {
+      "accepted": 200,
+      "baseline_m": 0.12,
+      "calibration_baseline_error_fraction": 0.1,
+      "depth_m": 0.6,
+      "landmark_error_mm_p50": 60.24782775535008,
+      "landmark_error_mm_p95": 60.47438464181688,
+      "motion_speed_m_s": 0.3,
+      "pixel_noise_sigma": 0,
+      "reasons": {
+        "measured": 200
+      },
+      "reprojection_px_p50": 0.000004126190782597704,
+      "scenario": "wrong_baseline_10pct",
+      "tracker_us_max": 249.75,
+      "tracker_us_p50": 105.958,
+      "tracker_us_p95": 117.292,
+      "trials": 200,
+      "unobserved_exposure_delay_ms": 0
+    },
+    {
+      "accepted": 0,
+      "baseline_m": 0.12,
+      "calibration_baseline_error_fraction": 0,
+      "depth_m": 0.6,
+      "landmark_error_mm_p50": null,
+      "landmark_error_mm_p95": null,
+      "motion_speed_m_s": 0.3,
+      "pixel_noise_sigma": 0,
+      "reasons": {
+        "reprojection_residual_too_high": 200
+      },
+      "reprojection_px_p50": null,
+      "scenario": "vertical_outlier",
+      "tracker_us_max": 128.125,
+      "tracker_us_p50": 75.375,
+      "tracker_us_p95": 86.625,
+      "trials": 200,
+      "unobserved_exposure_delay_ms": 0
+    }
+  ],
+  "schema_version": 1,
+  "seed": 7319,
+  "timing_scope": "HandTracker only; excludes capture, inference, transport, rendering; steady_clock",
+  "environment": {
+    "recorded_at": "2026-09-26T06:28:56.587Z",
+    "os": "Darwin",
+    "release": "25.6.0",
+    "architecture": "arm64",
+    "cpu": "Apple M3 Pro",
+    "logical_cpus": 11,
+    "memory_bytes": 19327352832,
+    "timing_note": "Single local run; no CPU isolation. Not an end-to-end latency benchmark."
+  }
+}
