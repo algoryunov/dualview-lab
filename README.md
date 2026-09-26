@@ -2,7 +2,7 @@
 
 **A laptop and a phone work as a stereo camera pair. Your hands are tracked in 3D and used to move objects in a 3D scene. No depth sensor.**
 
-[The setup](#the-setup) · [What you can do](#what-you-can-do) · [How it works](#how-two-cameras-become-3d) · [Quick start](#quick-start-on-macos-apple-silicon) · [Architecture](docs/architecture.md) · [Evaluation and limits](docs/evaluation.md)
+[The setup](#the-setup) · [What you can do](#what-you-can-do) · [How it works](#how-it-works) · [Quick start](#quick-start-on-macos-apple-silicon) · [Architecture](docs/architecture.md) · [Evaluation and limits](docs/evaluation.md)
 
 ## The setup
 
@@ -31,7 +31,7 @@ Spread your palms to stretch the material, bring them together to merge it, then
 
 ### Move and scale 3D objects
 
-**Move:** pinch your thumb and index finger, then move your hand to reposition the model — including toward and away from you, because the reconstruction is genuinely three-dimensional.
+**Move:** pinch thumb and index finger, then move your hand to reposition the model, including in depth.
 
 ![One hand pinching and moving a 3D bed model through the scene](docs/media/object-move.gif)
 
@@ -43,9 +43,11 @@ Spread your palms to stretch the material, bring them together to merge it, then
 
 Models are original procedural geometry: a bed, car, flower and tower, plus Light Trails and Energy experiments. **Auto demo** explores the liquid material without cameras; live 3D hand control requires calibration.
 
-## How two cameras become 3D
+## How it works
 
-A single camera cannot measure depth — a small hand nearby and a large hand far away produce the same image. Two cameras can, if you know exactly how they relate to each other. That "if" is the entire engineering problem, and it is what this project implements.
+Each camera detects 21 landmarks per hand. The landmarks are undistorted into normalized coordinates, triangulated against the calibrated camera pair to give metric 3D positions, and checked by reprojecting them back into both views.
+
+A laptop and a phone are not a purpose-built rig: different sensors, no shared clock, a video stream that can renegotiate resolution, and a calibration that a nudged laptop lid invalidates. Most of the pipeline deals with those conditions.
 
 ```mermaid
 flowchart LR
@@ -57,20 +59,17 @@ flowchart LR
     Hands --> Scene["Interactive scene<br/>Three.js + WebGL"]
 ```
 
-Each camera sees 21 landmarks per hand. For one landmark, each camera defines a ray through space; where the two rays meet is the landmark's 3D position. Doing that reliably with a phone on a stand and a laptop lid requires solving several problems that are easy to get quietly wrong:
+OpenCV supplies the primitives (`calibrateCamera`, `triangulatePoints`, ChArUco detection). What sits around them:
 
-| Problem | What this project does |
+| Concern | Approach |
 | --- | --- |
-| **Where are the cameras?** | ChArUco-target calibration solves each camera's intrinsics and lens distortion, then composes both target poses into the phone-from-laptop rigid transform (`calibration.cpp`). |
-| **Lens distortion bends the rays** | Landmarks are undistorted into normalized camera coordinates before any triangulation, so rays are straight lines in a metric frame. |
-| **Which hand is which?** | Both cross-view assignments are enumerated and the one with the lowest total reprojection error wins; hand identity is then preserved frame to frame so a held object never jumps to the other palm. |
-| **Is the 3D point real?** | Every landmark is re-projected into both images and rejected above a pixel threshold, with depth-plausibility bounds in both camera frames. |
-| **The cameras don't fire together** | Frames are paired by receive time against the slower stream, with an explicit age budget. This is approximate pairing, and [the evaluation quantifies exactly what it costs](docs/evaluation.md). |
-| **The phone changes resolution** | Intrinsics are rescaled only after verifying the new stream is a *uniform* resize of the calibrated profile — a crop or aspect change is rejected rather than silently producing wrong geometry. |
-| **Model preprocessing must match** | The palm detector's oriented-crop preprocessing is reimplemented to match the upstream MediaPipe pipeline and pinned by a golden fixture test, because silent preprocessing drift degrades accuracy invisibly. |
-| **Hands briefly disappear** | Short gaps are covered by filtering and bounded velocity prediction, labelled `predicted` in telemetry and expired after 500 ms so a guess is never mistaken for a measurement. |
-
-OpenCV supplies the primitives (`calibrateCamera`, `triangulatePoints`, ChArUco detection); the reconstruction pipeline, cross-view matching, validation gating, identity tracking and timing policy built on top of them are this project's own.
+| Extrinsics | ChArUco intrinsics per camera, then both target poses composed into the phone-from-laptop rigid transform (`calibration.cpp`). |
+| Frame pairing | Closest partner to the slower stream's latest frame, 250 ms age budget. Receive-time only — not synchronized exposure, and [the evaluation quantifies what that costs](docs/evaluation.md). |
+| Cross-view matching | Both assignments enumerated, lowest total reprojection error wins; primary-hand identity held across frames so a grabbed object does not jump palms. |
+| Rejection | Per-landmark reprojection gate plus depth bounds in both camera frames; poses above threshold are dropped rather than smoothed. |
+| Resolution changes | Intrinsics rescale only for a verified uniform resize; a crop or aspect change is rejected instead of silently skewing geometry. |
+| Preprocessing parity | The oriented-crop stage is reimplemented to match upstream MediaPipe and pinned by a golden fixture, since drift here degrades accuracy invisibly. |
+| Dropouts | Bounded velocity prediction, labelled `predicted` in telemetry and expired after 500 ms, so a guess is never counted as a measurement. |
 
 | Layer | Technology |
 | --- | --- |
@@ -83,9 +82,7 @@ Video travels over WebRTC; telemetry and commands use its DataChannel. WebSocket
 
 ## Engineering evidence
 
-Stereo reconstruction is easy to *appear* to get right, so the geometry is measured rather than asserted:
-
-- **[Synthetic geometry evaluation](docs/evaluation.md)** — reproducible noise, baseline, depth, timing and calibration-error experiments with [raw results](docs/evaluation/synthetic-geometry.json). The headline finding: a 40 ms hidden exposure delay yields about **67 mm of 3D error while reprojection residual stays near zero**. Low reprojection error is a consistency check, not proof of accuracy. Run it yourself with `make evaluate`.
+- **[Synthetic geometry evaluation](docs/evaluation.md)** — noise, baseline, depth, timing and calibration-error sweeps with [raw results](docs/evaluation/synthetic-geometry.json), reproducible via `make evaluate`. Includes the case worth knowing about: a 40 ms unobserved exposure delay gives ~67 mm median 3D error while reprojection residual stays near zero. Residual is a consistency check, not an accuracy metric.
 - **[Runtime ownership contract](docs/runtime-ownership.md)** — state owners, lock ordering, cancellation, persistence and publication guarantees for the concurrent pipeline.
 - **[Backpressure and operating limits](docs/operating-limits.md)** — the policy at every queueing boundary, and the conditions the system is designed for.
 - **[Verification](docs/verification.md)** — native and browser tests, concurrency tests, sanitizer coverage and outstanding physical-device measurements.
