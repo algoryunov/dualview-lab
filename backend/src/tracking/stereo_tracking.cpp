@@ -164,11 +164,55 @@ TrackingResult HandTracker::track(const CameraFrame (&f)[2], const std::vector<H
       hand.residuals = match.errors;
       hand.source = PoseSource::Measured;
       hand.hold_age_ms = 0;
-      if (prior[i].size() == 21 && cv::norm(prior[i][0] - match.points[0]) < .12)
-        for (int j = 0; j < 21; ++j) hand.filtered[j] = prior[i][j] * .35 + match.points[j] * .65;
-      cv::Vec3d velocity{};
       auto& stable = stable_[i];
       const double dt = std::chrono::duration<double>(now - stable.seen).count();
+      // A jump beyond the gate is treated as a new track by every estimator, so
+      // none of them smooth across an identity change.
+      const bool continuous =
+          prior[i].size() == 21 && cv::norm(prior[i][0] - match.points[0]) < .12;
+      Pose alpha_pose = match.points;
+      if (continuous)
+        for (int j = 0; j < 21; ++j) alpha_pose[j] = prior[i][j] * .35 + match.points[j] * .65;
+      const bool want_alpha_beta = strategy_ == FilterStrategy::AlphaBeta || compare_;
+      const bool want_kalman = strategy_ == FilterStrategy::Kalman || compare_;
+      if (!continuous) {
+        stable.alpha_beta.reset();
+        stable.kalman.reset();
+      }
+      const double filter_dt = (continuous && dt >= .015 && dt <= .5) ? dt : 0;
+      Pose alpha_beta_pose, kalman_pose;
+      if (want_alpha_beta)
+        alpha_beta_pose = stable.alpha_beta.update(match.points, filter_dt, tuning_);
+      if (want_kalman) {
+        const double baseline = cv::norm(stereo.translation_phone_from_laptop_m);
+        kalman_pose = stable.kalman.update(match.points, filter_dt, baseline,
+                                           a->camera_matrix(0, 0), tuning_);
+      }
+      switch (strategy_) {
+        case FilterStrategy::AlphaBeta:
+          hand.filtered = alpha_beta_pose;
+          break;
+        case FilterStrategy::Kalman:
+          hand.filtered = kalman_pose;
+          break;
+        default:
+          hand.filtered = alpha_pose;
+          break;
+      }
+      if (hand.filtered.size() != 21) hand.filtered = match.points;
+      // Shadow estimators are recorded on measured frames only: advancing their
+      // state during a prediction gap would double-integrate on recovery.
+      if (compare_) {
+        const auto record = [&](FilterStrategy candidate, const Pose& pose) {
+          if (candidate == strategy_ || pose.size() != 21) return;
+          hand.alternates.push_back(
+              {filter_strategy_name(candidate), pose, pose_rms_mm(pose, hand.filtered)});
+        };
+        record(FilterStrategy::AlphaOnly, alpha_pose);
+        record(FilterStrategy::AlphaBeta, alpha_beta_pose);
+        record(FilterStrategy::Kalman, kalman_pose);
+      }
+      cv::Vec3d velocity{};
       if (!stable.points.empty() && dt >= .015 && dt <= .5) {
         const auto displacement = hand.filtered[0] - stable.points[0];
         if (cv::norm(displacement) < .08) {
@@ -177,7 +221,10 @@ TrackingResult HandTracker::track(const CameraFrame (&f)[2], const std::vector<H
           if (speed > .25) velocity *= .25 / speed;
         }
       }
-      stable = {hand.filtered, hand.confidence, velocity, now};
+      stable.points = hand.filtered;
+      stable.confidence = hand.confidence;
+      stable.velocity = velocity;
+      stable.seen = now;
     }
   }
   const bool may_hold =
@@ -241,6 +288,17 @@ Json tracking_json(const TrackingResult& result) {
         h.residuals.empty() ? Json(nullptr) : Json(h.residuals);
     out[prefix + "landmark_confidence"] =
         h.raw.empty() ? Json(nullptr) : Json(std::vector<double>(21, h.confidence));
+    // Shadow-estimator output for offline comparison. Never used for interaction.
+    if (h.alternates.empty()) {
+      out[prefix + "filter_alternates"] = nullptr;
+    } else {
+      Json alternates = Json::array();
+      for (const auto& alternate : h.alternates)
+        alternates.push_back({{"strategy", alternate.strategy},
+                              {"rms_delta_mm", alternate.rms_delta_mm},
+                              {"filtered_points_m", pose_json(alternate.filtered)}});
+      out[prefix + "filter_alternates"] = alternates;
+    }
     out[camera + "_confidences"] = result.confidences[i];
     Json normalized = Json::array();
     for (const auto& hand : result.normalized[i]) {
@@ -252,5 +310,18 @@ Json tracking_json(const TrackingResult& result) {
     out[camera + "_landmarks_normalized"] = normalized.empty() ? Json(nullptr) : normalized[0];
   }
   return out;
+}
+// Compact per-strategy divergence summary for the structured tracking log.
+Json filter_comparison_json(const TrackingResult& result) {
+  Json out = Json::object();
+  for (int i = 0; i < 2; ++i) {
+    const auto& hand = result.hands[i];
+    if (hand.alternates.empty()) continue;
+    Json entry = Json::object();
+    for (const auto& alternate : hand.alternates)
+      entry[alternate.strategy] = alternate.rms_delta_mm;
+    out[i == 0 ? "primary_rms_delta_mm" : "secondary_rms_delta_mm"] = entry;
+  }
+  return out.empty() ? Json(nullptr) : out;
 }
 }  // namespace dualview

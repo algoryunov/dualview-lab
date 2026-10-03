@@ -7,6 +7,7 @@
 #include <opencv2/videoio.hpp>
 
 #include "dualview/event_log.hpp"
+#include "dualview/pose_capture.hpp"
 namespace dualview {
 namespace {
 Config startup_config(Config config) {
@@ -58,6 +59,10 @@ Runtime::Runtime(const Config& config)
       metal_(config.metal_log) {
   metadata_["processing"]["calibration_file"] = config_.calibration_file;
   metadata_["processing"]["max_pair_error_ms"] = config_.max_pair_error_ms;
+  tracker_.configure(config_.tracking_filter, config_.tracking_filter_compare,
+                     config_.filter_tuning);
+  metadata_["processing"]["tracking_filter"] = filter_strategy_name(config_.tracking_filter);
+  metadata_["processing"]["tracking_filter_compare"] = config_.tracking_filter_compare;
   metadata_["processing"]["phone_time_offset_ms"] = active_phone_offset_ms_;
   if (config_.inference_enabled) {
     inference_ = std::make_unique<inference::Controller>(
@@ -305,6 +310,22 @@ CommandReply Runtime::execute(const RuntimeCommand& request) {
 // reading order. See docs/runtime-ownership.md for the full contract.
 void Runtime::process(std::stop_token stop) {
   EventLog log(config_.tracking_log);
+  PoseCapture capture(config_.tracking_capture, config_.tracking_capture_seconds);
+  if (capture.enabled()) {
+    std::lock_guard lock(mutex_);
+    capture.begin({{"tracking_filter", filter_strategy_name(config_.tracking_filter)},
+                   {"tracking_filter_compare", config_.tracking_filter_compare},
+                   {"filter_alpha", config_.filter_tuning.alpha},
+                   {"filter_beta", config_.filter_tuning.beta},
+                   {"kalman_accel_sigma", config_.filter_tuning.kalman_accel_sigma},
+                   {"kalman_noise_px", config_.filter_tuning.kalman_noise_px},
+                   {"max_pair_error_ms", config_.max_pair_error_ms},
+                   {"inference_fps", config_.inference_fps},
+                   {"provider", metadata_["processing"].value("provider", "")},
+                   {"baseline_cm", stereo_.baseline_cm},
+                   {"calibrated", stereo_.calibrated},
+                   {"median_reprojection_error_px", stereo_.median_reprojection_error_px}});
+  }
   std::string last_status;
   Clock::time_point last_log{};
   std::uint64_t losses = 0, recoveries = 0;
@@ -467,8 +488,14 @@ void Runtime::process(std::stop_token stop) {
     const auto estimate =
         diagnostic_work ? estimate_motion_delay(diagnostic_work->samples) : TimingEstimate{};
     Json event;
+    TrackingResult captured;
+    bool capture_ready = false;
     {
       std::lock_guard lock(mutex_);
+      if (capture.enabled()) {
+        captured = tracking_;
+        capture_ready = true;
+      }
       if (diagnostic_work && diagnostics_.finish(diagnostic_work->generation, estimate))
         enqueue_event(
             {{"event", "timing_estimate"}, {"result", diagnostics_.snapshot()["timing_estimate"]}});
@@ -522,11 +549,17 @@ void Runtime::process(std::stop_token stop) {
         }
         for (const auto* key : {"candidate_residual_px", "laptop_confidences", "phone_confidences"})
           if (tracking.contains(key)) event[key] = tracking[key];
+        if (config_.tracking_filter_compare) {
+          const auto comparison = filter_comparison_json(tracking_);
+          if (!comparison.is_null()) event["filter_comparison"] = comparison;
+        }
         last_status = status;
         last_log = Clock::now();
       }
     }
     if (!event.is_null()) log.write(event);
+    // Serialization and disk I/O stay outside every runtime lock.
+    if (capture_ready) capture.record(captured, processed);
     std::deque<Json> connection_events;
     {
       std::lock_guard lock(mutex_);

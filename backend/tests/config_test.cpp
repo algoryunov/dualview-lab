@@ -38,5 +38,32 @@ int main() {
   setenv("DUALVIEW_PORT", "18445", 1);
   setenv("DUALVIEW_TLS", "false", 1);
   assert(dualview::Config{}.public_origin == "http://localhost:18445");
+  unsetenv("DUALVIEW_PORT");
+  unsetenv("DUALVIEW_TLS");
+
+  // Tracking-filter selection defaults to the supported estimator, and an
+  // unrecognised name must fail loudly rather than quietly changing estimator.
+  assert(dualview::Config{}.tracking_filter == dualview::FilterStrategy::AlphaOnly);
+  assert(!dualview::Config{}.tracking_filter_compare);
+  assert(rejects("DUALVIEW_TRACKING_FILTER", "ekf"));
+  assert(rejects("DUALVIEW_TRACKING_FILTER", "Kalman"));
+  assert(rejects("DUALVIEW_TRACKING_FILTER_COMPARE", "1"));
+  assert(rejects("DUALVIEW_TRACKING_KALMAN_ACCEL", "0"));
+  assert(rejects("DUALVIEW_TRACKING_KALMAN_ACCEL", "4x"));
+  assert(rejects("DUALVIEW_TRACKING_FILTER_BETA", "1.5"));
+  setenv("DUALVIEW_TRACKING_FILTER", "kalman", 1);
+  setenv("DUALVIEW_TRACKING_FILTER_COMPARE", "true", 1);
+  setenv("DUALVIEW_TRACKING_KALMAN_ACCEL", "2.5", 1);
+  {
+    const dualview::Config config;
+    assert(config.tracking_filter == dualview::FilterStrategy::Kalman);
+    assert(config.tracking_filter_compare);
+    assert(config.filter_tuning.kalman_accel_sigma == 2.5);
+    assert(config.filter_tuning.beta == .35);
+  }
+  unsetenv("DUALVIEW_TRACKING_FILTER");
+  unsetenv("DUALVIEW_TRACKING_FILTER_COMPARE");
+  unsetenv("DUALVIEW_TRACKING_KALMAN_ACCEL");
+
   std::cout << "Strict environment parsing and origin normalization verified\n";
 }
